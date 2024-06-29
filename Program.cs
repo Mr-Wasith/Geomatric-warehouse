@@ -1,131 +1,111 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shape
+namespace GW
 {
-    public class Circle
+    public class Shape
     {
-        public double dia;
         public int id;
-        public double area()
+        public virtual double getarea()
         {
-            return Math.PI * (dia * dia / 4);
+            return 0;
+        }
+
+    }
+    public class Circle : Shape
+    {
+        public double diameter;
+        public override double getarea()
+        {
+            return Math.PI * diameter * diameter / 4;
         }
     }
-    public class Rectangle
+
+    public class Rectangle : Shape
     {
         public double height;
         public double width;
-        public int id;
-        public double area()
+        public override double getarea()
         {
             return height * width;
         }
     }
 
-    internal class program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Circle[] c = new Circle[100];
-            Rectangle[] r = new Rectangle[100];
-
-            int a;
-            int cnt = 0;
-            int cir_cnt = 0;
-            int rec_cnt = 0;
-            double total_area = 0;
+            Shape[] sh = new Shape[100];
             double cir_area = 0;
-            double rec_area = 0;
-
-            while (true)
+            double rect_area = 0;
+            int i = 0;
+            int cir_ct = 0;
+            int rect_ct = 0;
+            while (i < 100)
             {
                 Console.WriteLine("1. Add a Circle");
                 Console.WriteLine("2. Add a Rectangle");
                 Console.WriteLine("3. List Items");
-                Console.WriteLine("4. Get Statistics");
+                Console.WriteLine("4. Statisitcs");
                 Console.WriteLine("5. Exit");
-
-                a = Convert.ToInt32(Console.ReadLine());
-
-                if (a == 1)
+                int n;
+                n = Convert.ToInt32(Console.ReadLine());
+                if (n == 1)
                 {
-                    c[cnt] = new Circle();
-                    r[cnt] = new Rectangle();
-                    c[cnt].id = 1;
-                    r[cnt].id = 01;
                     Console.Write("Enter the Diameter : ");
-                    c[cnt].dia = Convert.ToInt32(Console.ReadLine());
-                    cir_cnt++;
-                    cnt++;
-                }
+                    Circle circle = new Circle();
+                    circle.id = i + 1;
+                    circle.diameter = Convert.ToInt32(Console.ReadLine());
+                    cir_area += circle.getarea();
+                    sh[i] = circle;
+                    i++;
+                    cir_ct++;
 
-                else if (a == 2)
+                }
+                else if (n == 2)
                 {
-                    c[cnt] = new Circle();
-                    r[cnt] = new Rectangle();
-                    c[cnt].id = 0;
-                    r[cnt].id = 1;
+                    Rectangle rectangle = new Rectangle();
                     Console.Write("Enter the Height : ");
-                    r[cnt].height = Convert.ToInt32(Console.ReadLine());
+                    rectangle.height = Convert.ToInt32(Console.ReadLine());
                     Console.Write("Enter the Width : ");
-                    r[cnt].width = Convert.ToInt32(Console.ReadLine());
-                    rec_cnt++;
-                    cnt++;
-                }
+                    rectangle.width = Convert.ToInt32(Console.ReadLine());
+                    rectangle.id = i + 1;
+                    rect_area += rectangle.getarea();
+                    sh[i] = rectangle;
+                    i++;
+                    rect_ct++;
 
-                else if (a == 3)
+                }
+                else if (n == 3)
                 {
-                    Console.WriteLine("ID Type Dimension");
-                    Console.WriteLine("=================");
-                    for (int i = 0; i < cnt; i++)
+                    Console.WriteLine("ID\tTypes\tDimension");
+                    Console.WriteLine("=========================");
+                    foreach (Shape j in sh)
                     {
-                        if (c[i].id == 1)
+                        if (j is Circle)
                         {
-                            Console.WriteLine($"{i + 1} Circle {c[i].dia}");
+                            Circle circle = (Circle)j;
+                            Console.WriteLine(circle.id + "\tCircle\t\t" + circle.diameter);
                         }
-                        else
+                        else if (j is Rectangle)
                         {
-                            Console.WriteLine($"{i + 1} Rectangle {r[i].height} x {r[i].width}");
+                            Rectangle rectangle = (Rectangle)j;
+                            Console.WriteLine(rectangle.id + "\tRectangle\t" + rectangle.height + " X " + rectangle.width);
                         }
                     }
                 }
-
-                else if (a == 4)
+                else if (n == 4)
                 {
-                    Console.WriteLine($"Total Shapes : {cnt}");
-                    Console.WriteLine($"Total numbers of Circles : {cir_cnt}");
-                    Console.WriteLine($"Total numbers of Rectangles : {rec_cnt}");
-                    for (int i = 0; i < cnt; i++)
-                    {
-                        if (c[i].id == 1)
-                        {
-                            total_area += c[i].area();
-                            cir_area += c[i].area();
-                        }
-                        else
-                        {
-                            total_area += r[i].area();
-                            rec_area += r[i].area();
-                        }
-                    }
-                    Console.WriteLine($"The Total Area : {(total_area)}");
-                    Console.WriteLine($"The Total Area occupied by rectangles : {(rec_area)}({((rec_area / total_area) * 100):F1}%)");
-                    Console.WriteLine($"The Total Area occupied by circles : {(cir_area)}({((cir_area / total_area) * 100):F1}%)");
-
+                    Console.WriteLine("Total Shapes : " + (cir_ct + rect_ct));
+                    Console.WriteLine("Total Circles : " + cir_ct);
+                    Console.WriteLine("Total Rectangles : " + rect_ct);
+                    Console.WriteLine($"Total Area : {cir_area + rect_area:F2}");
+                    Console.WriteLine($"Total area occupied by Circles : {cir_area:F2} ({(((cir_area) / (cir_area + rect_area)) * 100):F2}%)");
+                    Console.WriteLine($"Total area occupied by Rectangles : {rect_area:F2} ({(((rect_area) / (rect_area + cir_area)) * 100):F2}%)");
                 }
-
-                else if (a == 5)
+                else if (n == 5)
                 {
                     break;
                 }
             }
-
         }
     }
-
 }
